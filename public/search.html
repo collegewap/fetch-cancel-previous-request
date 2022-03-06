@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Search Page</title>
+  </head>
+  <style>
+    body {
+      margin-top: 10px;
+    }
+    .search-wrapper {
+      display: flex;
+      justify-content: center;
+    }
+  </style>
+
+  <script>
+    const search = () => {
+      const inputElement = document.querySelector("#search");
+      const searchValue = inputElement.value?.trim();
+      if (searchValue) {
+        if (window.controller) {
+          window.controller.abort();
+        }
+        window.controller = new AbortController();
+        window.signal = window.controller.signal;
+
+        fetch("http://localhost:4000/animals?q=" + searchValue, {
+          signal: signal,
+        })
+          .then((response) => response.json())
+          .then((data) => console.log("Results for " + searchValue, data))
+          .catch((err) => {
+            console.log(err);
+          });
+      }
+    };
+  </script>
+  <body>
+    <div class="search-wrapper">
+      <input
+        type="text"
+        name="search"
+        id="search"
+        placeholder="Type query..."
+        onkeyup="search()"
+      />
+    </div>
+  </body>
+</html>
